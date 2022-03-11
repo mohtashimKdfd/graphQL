@@ -1,14 +1,28 @@
 import graphene
+import json
 
-class Query(graphene.ObjectType):
+DATA=[
+    {
+        "name":"Mohtashim",
+        "age" : "22"
+    },
+    {
+        "name":"Kamran",
+        "age" : "22"
+    }
+]
+
+class User(graphene.ObjectType):
     name = graphene.String()
     age = graphene.String()
 
-    def resolve_name(self, info):
-        return "Mohtashim"
 
-    def resolve_age(self, info):
-        return "22"
+
+class Query(graphene.ObjectType):
+    array = graphene.List(User)
+
+    def resolve_array(self, info):
+        return DATA
 
 schema = graphene.Schema(query=Query)
 print(schema)
@@ -16,10 +30,11 @@ print(schema)
 # ++++++++++++++++++++ #
 query = '''
     query myquery{
-        name
-        age
+        array{
+            myname : name
+        }
     }
 '''
 result = schema.execute(query)
 
-print(result)
+print(json.dumps(result.data))
