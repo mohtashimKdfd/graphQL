@@ -1,40 +1,12 @@
-import graphene
+import falcon
 import json
+from database import engine, session, init_session
 
-DATA=[
-    {
-        "name":"Mohtashim",
-        "age" : "22"
-    },
-    {
-        "name":"Kamran",
-        "age" : "22"
-    }
-]
+class Home:
+    def on_get(self, req, resp):
+        resp.body = json.dumps("Hello Boiss")
+        return resp
 
-class User(graphene.ObjectType):
-    name = graphene.String()
-    age = graphene.String()
-
-
-
-class Query(graphene.ObjectType):
-    array = graphene.List(User)
-
-    def resolve_array(self, info):
-        return DATA
-
-schema = graphene.Schema(query=Query)
-print(schema)
-
-# ++++++++++++++++++++ #
-query = '''
-    query myquery{
-        array{
-            myname : name
-        }
-    }
-'''
-result = schema.execute(query)
-
-print(json.dumps(result.data))
+init_session()    
+api = falcon.App()
+api.add_route('/',Home())
